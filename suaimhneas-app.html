@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Suaimhneas">
+<meta name="theme-color" content="#e9e6da">
+<title>Suaimhneas</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Inter+Tight:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --limewash: #e9e6da;
+    --paper: #ddd9ca;
+    --stone: #b9b5a6;
+    --lichen: #7d8975;
+    --moss: #4f5d48;
+    --bracken: #8a5a3e;
+    --bog: #2a2c25;
+    --bog-soft: #4a4d44;
+    --bay: #5e6c72;
+    --mist: #7a7d72;
+    --ink: #1c1e19;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: rgba(138, 90, 62, 0.1); }
+
+  html, body {
+    background: var(--limewash);
+    color: var(--ink);
+    font-family: 'EB Garamond', Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  body {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .screen { display: none; }
+  .screen:target { display: block; }
+  /* Show home by default (when no hash) */
+  body:not(:has(.screen:target)) #home { display: block; }
+
+  /* Fallback for browsers without :has() */
+  .screen.active { display: block; }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    background: var(--limewash);
+    border-bottom: 1px solid rgba(185, 181, 166, 0.4);
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    min-height: 50px;
+  }
+
+  .back-link {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+    color: var(--bracken);
+    text-decoration: none;
+    padding: 8px 12px 8px 0;
+    min-width: 80px;
+  }
+
+  .top-title {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--bracken);
+    flex: 1;
+    text-align: center;
+  }
+
+  .top-spacer { min-width: 80px; display: inline-block; }
+
+  .hero-area { padding: 32px 24px 24px; text-align: center; }
+
+  .hero-eyebrow {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.7rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--lichen);
+    margin-bottom: 16px;
+  }
+
+  .hero-title {
+    font-size: clamp(3rem, 13vw, 4.5rem);
+    line-height: 0.95;
+    color: var(--bog);
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+
+  .hero-title .accent { color: var(--bracken); }
+
+  .hero-pron {
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--mist);
+    margin-bottom: 18px;
+  }
+
+  .hero-pron em { color: var(--bracken); }
+
+  .hero-sub {
+    font-style: italic;
+    font-size: 1.05rem;
+    line-height: 1.55;
+    color: var(--bog-soft);
+    max-width: 380px;
+    margin: 0 auto 20px;
+  }
+
+  .hero-svg {
+    width: 100%;
+    max-width: 340px;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .menu-section-label {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--bracken);
+    padding: 24px 24px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .menu-section-label::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--bracken);
+  }
+
+  .menu-link {
+    display: flex;
+    align-items: center;
+    padding: 18px 24px;
+    border-bottom: 1px solid rgba(185, 181, 166, 0.4);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .menu-link:active { background: rgba(138, 90, 62, 0.08); }
+
+  .menu-num {
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--bracken);
+    width: 32px;
+    flex-shrink: 0;
+  }
+
+  .menu-text { flex: 1; min-width: 0; }
+
+  .menu-title {
+    font-size: 1.18rem;
+    color: var(--bog);
+    line-height: 1.2;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .menu-sub {
+    font-size: 0.85rem;
+    color: var(--mist);
+    font-style: italic;
+    line-height: 1.4;
+    display: block;
+  }
+
+  .menu-arrow {
+    color: var(--bracken);
+    font-size: 1.4rem;
+    margin-left: 12px;
+    flex-shrink: 0;
+    opacity: 0.6;
+  }
+
+  .content { padding: 24px 24px 40px; max-width: 600px; margin: 0 auto; }
+
+  .content-eyebrow {
+    font-family: 'Inter Tight', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--bracken);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .content-eyebrow::before {
+    content: '';
+    width: 24px;
+    height: 1px;
+    background: var(--bracken);
+  }
+
+  .dark .content-eyebrow { color: var(--stone); }
+  .dark .content-eyebrow::before { background: var(--stone); }
+
+  .content-title {
+    font-size: clamp(1.8rem, 5.5vw, 2.4rem);
+    line-height: 1.1;
+    color: var(--bog);
+    margin-bottom: 24px;
+    letter-spacing: -0.02em;
+    font-weight: 400;
+  }
+
+  .dark .content-title { color: var(--limewash); }
+  .content-title .italic { font-style: italic; color: var(--bracken); }
+
+  .content-body { font-size: 1.05rem; line-height: 1.7; color: var(--bog); }
+  .dark .content-body { color: var(--stone); }
+  .content-body p { margin-bottom: 18px; }
+  .content-body em { color: var(--bracken); font-style: italic; }
+  .content-body strong { color: var(--bog); font-weight: 500; }
+  .dark .content-body strong { color: var(--limewash); }
+
+  .item-card { padding: 22px 0; border-top: 1px solid rgba(185, 181, 166, 0.5); }
+  .item-card:last-child { border-bottom: 1px solid rgba(185, 181, 166, 0.5); }
+  .item-num { font-style: italic; font-size: 0.95rem; color: var(--bracken); margin-bottom: 8px; }
+  .item-title { font-size: 1.3rem; color: var(--bog); line-height: 1.2; margin-bottom: 10px; font-weight: 400; }
+  .dark .item-title { color: var(--limewash); }
+  .item-body { font-size: 0.96rem; line-height: 1.65; color: var(--bog-soft); }
+  .dark .item-body { color: var(--stone); }
+  .item-body em { color: var(--bracken); font-style: italic; }
+
+  .day-row {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    gap: 14px;
+    padding: 16px 0;
+    border-top: 1px solid rgba(233,230,218,0.12);
+    align-items: baseline;
+  }
+  .day-row:first-of-type { border-top: none; padding-top: 8px; }
+  .day-time { font-style: italic; color: var(--bracken); font-size: 1rem; }
+  .day-content h4 { color: var(--limewash); font-size: 1.08rem; margin-bottom: 6px; font-weight: 400; }
+  .day-content p { font-size: 0.9rem; color: var(--stone); line-height: 1.55; }
+
+  .tier {
+    padding: 18px;
+    background: rgba(185, 181, 166, 0.18);
+    border-radius: 6px;
+    margin-bottom: 14px;
+  }
+  .tier-num { font-style: italic; color: var(--bracken); font-size: 0.9rem; margin-bottom: 6px; }
+  .tier-title { font-size: 1.18rem; color: var(--bog); margin-bottom: 8px; font-weight: 400; }
+  .tier-body { font-size: 0.92rem; line-height: 1.55; color: var(--bog-soft); }
+
+  .closing-quote {
+    font-style: italic;
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--bracken);
+    text-align: center;
+    margin: 32px auto 24px;
+  }
+  .closing-quote em { color: var(--bog); }
+
+  .cta-btn {
+    display: block;
+    padding: 16px 24px;
+    background: var(--bracken);
+    color: var(--limewash);
+    font-style: italic;
+    font-size: 1.08rem;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 4px;
+    margin-top: 24px;
+  }
+  .cta-btn:active { opacity: 0.85; }
+
+  .dark { background: var(--bog); color: var(--limewash); min-height: 100vh; }
+  .dark .topbar { background: var(--bog); border-bottom-color: rgba(185, 181, 166, 0.2); }
+  .dark .top-title { color: var(--stone); }
+
+  .bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(64px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: var(--limewash);
+    border-top: 1px solid rgba(185, 181, 166, 0.4);
+    display: flex;
+    z-index: 100;
+  }
+
+  .nav-link {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px 4px;
+    color: var(--mist);
+    text-decoration: none;
+    font-family: 'Inter Tight', sans-serif;
+  }
+
+  .nav-link:active { background: rgba(138, 90, 62, 0.05); }
+
+  .nav-link svg {
+    width: 22px;
+    height: 22px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.5;
+  }
+
+  .nav-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .smoke-1 { animation: smokeDrift 7s ease-in-out infinite; }
+  .smoke-2 { animation: smokeDrift 8s ease-in-out infinite 1.5s; }
+  .smoke-3 { animation: smokeDrift 6.5s ease-in-out infinite 0.8s; }
+  @keyframes smokeDrift {
+    0%, 100% { opacity: 0.35; transform: translateX(0); }
+    50% { opacity: 0.5; transform: translateX(2px); }
+  }
+
+  .wave-1, .wave-2, .wave-3 { animation: waveRoll 5s ease-in-out infinite; }
+  .wave-2 { animation-delay: 0.7s; animation-duration: 6s; }
+  .wave-3 { animation-delay: 1.4s; animation-duration: 5.5s; }
+  @keyframes waveRoll {
+    0%, 100% { opacity: 0.5; transform: translateX(0); }
+    50% { opacity: 0.7; transform: translateX(3px); }
+  }
+
+  @media (min-width: 600px) {
+    body { max-width: 440px; margin: 0 auto; box-shadow: 0 0 60px rgba(0,0,0,0.08); min-height: 100vh; }
+    html { background: var(--paper); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HOME -->
+<div class="screen active" id="home">
+  <div class="topbar">
+    <span class="top-spacer"></span>
+    <div class="top-title">SUAIMHNEAS</div>
+    <span class="top-spacer"></span>
+  </div>
+
+  <div class="hero-area">
+    <div class="hero-eyebrow">A House in the West of Ireland</div>
+    <h1 class="hero-title">Suaimhneas<span class="accent">.</span></h1>
+    <p class="hero-pron">[ <em>SOOIV-nyas</em> ] · the deep stillness after long noise</p>
+    <p class="hero-sub">A clachan of three lime-washed stone cottages in Connemara, held open in perpetuity for those who have been worn down.</p>
+
+    <svg class="hero-svg" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 0 110 L 30 90 L 55 100 L 90 80 L 125 95 L 165 78 L 205 92 L 245 75 L 285 90 L 320 75 L 355 90 L 395 78 L 400 85 L 400 130 L 0 130 Z" fill="#7d8975" opacity="0.4"/>
+      <path d="M 270 130 Q 280 122, 295 124 Q 308 128, 315 138 L 315 158 L 270 158 Z" fill="#7d8975" opacity="0.55"/>
+      <rect x="315" y="135" width="50" height="22" fill="#5e6c72" opacity="0.3"/>
+      <line class="wave-1" x1="318" y1="142" x2="362" y2="142" stroke="#5e6c72" stroke-width="0.4"/>
+      <line class="wave-2" x1="318" y1="148" x2="362" y2="148" stroke="#5e6c72" stroke-width="0.4"/>
+      <line class="wave-3" x1="318" y1="154" x2="362" y2="154" stroke="#5e6c72" stroke-width="0.4"/>
+      <path d="M 365 135 Q 378 122, 395 128 L 400 132 L 400 158 L 365 158 Z" fill="#7d8975" opacity="0.55"/>
+      <path d="M 0 155 Q 100 142, 200 148 Q 300 152, 400 145 L 400 200 L 0 200 Z" fill="#4f5d48" opacity="0.2"/>
+      <g transform="translate(155, 138)">
+        <rect x="0" y="10" width="55" height="18" fill="#e9e6da" stroke="#1c1e19" stroke-width="0.4"/>
+        <polygon points="-2,10 27.5,0 57,10" fill="#2a2c25"/>
+        <rect x="-1" y="-2" width="3" height="11" fill="#1c1e19"/>
+        <rect x="53" y="-2" width="3" height="11" fill="#1c1e19"/>
+        <rect x="25" y="16" width="4" height="12" fill="#8a5a3e"/>
+      </g>
+      <g transform="translate(225, 152)">
+        <rect x="0" y="10" width="42" height="15" fill="#e9e6da" stroke="#1c1e19" stroke-width="0.4"/>
+        <polygon points="-2,10 21,2 44,10" fill="#2a2c25"/>
+        <rect x="-1" y="0" width="3" height="10" fill="#1c1e19"/>
+        <rect x="40" y="0" width="3" height="10" fill="#1c1e19"/>
+        <rect x="19" y="15" width="4" height="10" fill="#8a5a3e"/>
+      </g>
+      <g transform="translate(108, 158)">
+        <rect x="0" y="10" width="38" height="14" fill="#e9e6da" stroke="#1c1e19" stroke-width="0.4"/>
+        <polygon points="-2,10 19,2 40,10" fill="#2a2c25"/>
+        <rect x="-1" y="1" width="3" height="9" fill="#1c1e19"/>
+        <rect x="36" y="1" width="3" height="9" fill="#1c1e19"/>
+        <rect x="17" y="15" width="4" height="9" fill="#8a5a3e"/>
+      </g>
+      <path class="smoke-1" d="M 156 132 Q 152 122, 158 112" stroke="#7a7d72" stroke-width="0.5" fill="none" opacity="0.4"/>
+      <path class="smoke-2" d="M 207 132 Q 203 122, 209 112" stroke="#7a7d72" stroke-width="0.5" fill="none" opacity="0.4"/>
+      <path class="smoke-3" d="M 226 145 Q 222 137, 228 129" stroke="#7a7d72" stroke-width="0.5" fill="none" opacity="0.35"/>
+      <path d="M 80 175 Q 82 158, 92 150 Q 98 147, 105 147" stroke="#1c1e19" stroke-width="0.7" fill="none" opacity="0.6"/>
+      <ellipse cx="103" cy="148" rx="9" ry="4" fill="#4f5d48" opacity="0.5"/>
+      <circle cx="80" cy="38" r="14" fill="#8a5a3e" opacity="0.13"/>
+      <circle cx="80" cy="38" r="9" fill="#8a5a3e" opacity="0.2"/>
+    </svg>
+  </div>
+
+  <div class="menu-section-label">The Concept</div>
+  <a class="menu-link" href="#premise">
+    <span class="menu-num">i.</span>
+    <span class="menu-text"><span class="menu-title">The Premise</span><span class="menu-sub">A house in Connemara that knows how to wait</span></span>
+    <span class="menu-arrow">›</span>
+  </a>
+  <a class="menu-link" href="#commitments">
+    <span class="menu-num">ii.</span>
+    <span class="menu-text"><span class="menu-title">Three Commitments</span><span class="menu-sub">Free, long enough, built into the parish</span></span>
+    <span class="menu-arrow">›</span>
+  </a>
+  <a class="menu-link" href="#pillars">
+    <span class="menu-num">iii.</span>
+    <span class="menu-text"><span class="menu-title">Six Pillars</span><span class="menu-sub">Land, architecture, palette, people, parish, recovery</span></span>
+    <span class="menu-arrow">›</span>
+  </a>
+
+  <div class="menu-section-label">The Place</div>
+  <a class="menu-link" href="#place">
+    <span class="menu-num">iv.</span>
+    <span class="menu-text"><span class="menu-title">The Clachan</span><span class="menu-sub">Three cottages around a sheltered courtyard</span></span>
+    <span class="menu-arrow">›</span>
+  </a>
+  <a class="menu-link" href="#day">
+    <span class="menu-num">v.</span>
+    <span class="menu-text"><span class="menu-title">A Day at Suaimhneas</span><span class="menu-sub">No schedule. A rhythm.</span></span>
+    <span class="menu-arrow">›</span>
+  </a>
+  <a class="menu-link" href="#who">
+    <span class="menu-num">vi.</span>
+    <span class="menu-text"><span class="menu-title">Who Comes</span><span class="menu-sub">Not the worried well. The genuinely emptied.</span></span>
+    <span class="menu-arrow">›</span>
+  </a>
+
+  <div class="menu-section-label">The Invitation</div>
+  <a class="menu-link" href="#invitation">
+    <span class="menu-num">vii.</span>
+    <span class="menu-text"><span class="menu-title">An Invitation</span><span class="menu-sub">A founding endowment, in three tiers</span></span>
+    <span class="menu-arrow">›</span>
+  </a>
+</div>
+
+<!-- PREMISE -->
+<div class="screen" id="premise">
+  <div class="topbar">
+    <a class="back-link" href="#home">← Back</a>
+    <div class="top-title">THE PREMISE</div>
+    <span class="top-spacer"></span>
+  </div>
+  <div class="content">
+    <div class="content-eyebrow">The Premise</div>
+    <h2 class="content-title">A house in Connemara that <span class="italic">knows how to wait.</span></h2>
+    <div class="content-body">
+      <p>Connemara was emptied once already. In the years after the Hunger, whole townlands fell silent — roofless gables, hearths gone cold, footpaths grown over with bracken and bog cotton. The wind kept moving through them. The walls stayed where they were. The land learned the particular grief of holding a place that nobody had the strength to inhabit.</p>
+      <p>This is the part of Ireland that knows what to do with a worn body. Not because it offers comfort — Connemara is not a comfortable place — but because it has held empty cottages without judgement for a hundred and seventy years, and a body that arrives there exhausted is met by a landscape that has been waiting, attentively, for someone to come back.</p>
+      <p>Suaimhneas is a proposal for three lime-washed stone cottages, rebuilt around a sheltered courtyard on a south-facing hillside between mountain and sea, and held open in perpetuity for the people who would never otherwise reach such a place: <em>nurses, carers, cancer survivors, parents of dying children, frontline workers whose nervous systems have given way.</em></p>
+      <p><strong>It is not a clinic. It is a house in Connemara that knows how to wait.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- COMMITMENTS -->
+<div class="screen" id="commitments">
+  <div class="topbar">
+    <a class="back-link" href="#home">← Back</a>
+    <div class="top-title">COMMITMENTS</div>
+    <span class="top-spacer"></span>
+  </div>
+  <div class="content">
+    <div class="content-eyebrow">Three Commitments</div>
+    <h2 class="content-title">A house, in this place, must keep its <span class="italic">word.</span></h2>
+    <div class="item-card">
+      <div class="item-num">i.</div>
+      <h3 class="item-title">Free, in perpetuity</h3>
+      <p class="item-body">Eligibility is by referral — from oncology services, hospice teams, palliative-care networks, frontline-worker support charities. <em>No guest is asked what they earn or what they can pay.</em></p>
+    </div>
+    <div class="item-card">
+      <div class="item-num">ii.</div>
+      <h3 class="item-title">Long enough to mean something</h3>
+      <p class="item-body">Stays are six to twelve weeks. <em>A weekend cannot undo what a year has done to the body.</em> The body needs slowness more than it needs intensity.</p>
+    </div>
+    <div class="item-card">
+      <div class="item-num">iii.</div>
+      <h3 class="item-title">Built into the parish</h3>
+      <p class="item-body">Suaimhneas is a member of its townland — buying from local farms, employing local craftspeople. <em>The house exists inside Connemara, not on top of it.</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- PILLARS -->
+<div class="screen" id="pillars">
+  <div class="topbar">
+    <a class="back-link" href="#home">← Back</a>
+    <div class="top-title">SIX PILLARS</div>
+    <span class="top-spacer"></span>
+  </div>
+  <div class="content">
+    <div class="content-eyebrow">What Makes the Place</div>
+    <h2 class="content-title">Six things, <span class="italic">held in one hand.</span></h2>
+    <div class="item-card">
+      <div class="item-num">— 01</div>
+      <h3 class="item-title">The Land</h3>
+      <p class="item-body">A south-facing hillside between Roundstone and Clifden, halfway between the Twelve Bens and the Atlantic at Mannin Bay. <em>The land does not need to be improved. It needs to be quietly kept.</em></p>
+    </div>
+    <div class="item-card">
+      <div class="item-num">— 02</div>
+      <h3 class="item-title">The Architecture</h3>
+      <p class="item-body">Three single-storey cottages in local fieldstone, lime-washed white in the old way, set in a clachan around a sheltered courtyard. Walls eighteen inches thick. Slate roofs. Twin gable-end chimneys. In conversation with <em>Ryan W. Kennihan, Tom de Paor, Tierney Haines</em>.</p>
+    </div>
+    <div class="item-card">
+      <div class="item-num">— 03</div>
+      <h3 class="item-title">The Palette</h3>
+      <p class="item-body">Limewash white. Granite grey. Lichen grey-green. Rust-brown of an old gate hinge. Peat-dark. Slate-blue of Mannin Bay. Floors in flagstone and oak. Donegal tweed, Galway wool, Foxford linen.</p>
+    </div>
+    <div class="item-card">
+      <div class="item-num">— 04</div>
+      <h3 class="item-title">The People</h3>
+      <p class="item-body">A small resident team — clinical lead, two body-workers, cook, gardener, housekeeper, parish liaison. The Irish word <em>suíocháin</em> — the act of sitting with — is, in this part of the country, an old skill, intact.</p>
+    </div>
+    <div class="item-card">
+      <div class="item-num">— 05</div>
+      <h3 class="item-title">The Parish</h3>
+      <p class="item-body">Vegetables from Carna and Ballyconneely. Lamb from the next townland. Bread baked on site. The thatcher, stonemason, carpenter, ironworker — all local.</p>
+    </div>
+    <div class="item-card">
+      <div class="item-num">— 06</div>
+      <h3 class="item-title">The Land's Recovery</h3>
+      <p class="item-body">Carbon-negative by design. Sphagnum recovery on the upland bog. Fifteen thousand newly planted native broadleaves. <em>A place of recovery should itself be in recovery.</em></p>
+    </div>
+  </div>
+</div>
+
+<!-- PLACE -->
+<div class="screen" id="place">
+  <div class="topbar">
+    <a class="back-link" href="#home">← Back</a>
+    <div class="top-title">THE CLACHAN</div>
+    <span class="top-spacer"></span>
+  </div>
+  <div class="content">
+    <div class="content-eyebrow">The Place</div>
+    <h2 class="content-title">Three cottages around <span class="italic">a sheltered courtyard.</span></h2>
+    <p class="content-body" style="font-style: italic; margin-bottom: 24px;">The clachan sits on a south-facing hillside between Roundstone and Clifden. Three cottages turn their backs to the prevailing wind and their faces to one another.</p>
+    <div class="item-card">
+      <h3 class="item-title">Cottage A — The Hearth</h3>
+      <p class="item-body">Common rooms, library, dining hall, kitchen, four practitioner studios. The deep central hearth that is never allowed to go out.</p>
+    </div>
+    <div class="item-card">
+      <h3 class="item-title">Cottages B and C — Sleeping</h3>
+      <p class="item-body">Three guest rooms in each, six in total. Every room has a deep window seat looking south, a half-door to the courtyard.</p>
+    </div>
+    <div class="item-card">
+      <h3 class="item-title">The Bath House</h3>
+      <p class="item-body">A small fourth building, set apart in the lee of the hill. Stone, water, fire, peat-steam. Outdoor cold plunge.</p>
+    </div>
+  </div>
+</div>
+
+<!-- DAY (DARK) -->
+<div class="screen dark" id="day">
+  <div class="topbar">
+    <a class="back-link" href="#home">← Back</a>
+    <div class="top-title">A DAY HERE</div>
+    <span class="top-spacer"></span>
+  </div>
+  <div class="content">
+    <div class="content-eyebrow">A Day at Suaimhneas</div>
+    <h2 class="content-title">No schedule. <span class="italic">A rhythm.</span></h2>
+    <p class="content-body" style="font-style: italic; color: var(--stone); margin-bottom: 24px;">The house does not programme its guests. It offers a frame — the slow, repeating shape of a Connemara day.</p>
+    <div class="day-row">
+      <div class="day-time">07:00</div>
+      <div class="day-content"><h4>The hearth quickened</h4><p>The turf fire, banked the night before, is opened up. Tea is set in the kitchen.</p></div>
+    </div>
+    <div class="day-row">
+      <div class="day-time">08:30</div>
+      <div class="day-content"><h4>Breakfast in silence</h4><p>Brown soda bread, eggs from the henhouse, smoked mackerel from Roundstone Quay.</p></div>
+    </div>
+    <div class="day-row">
+      <div class="day-time">10:30</div>
+      <div class="day-content"><h4>Hands and bodies</h4><p>One-to-one sessions in the practice cottage. Craniosacral. Acupuncture. Conversation.</p></div>
+    </div>
+    <div class="day-row">
+      <div class="day-time">13:30</div>
+      <div class="day-content"><h4>The long lunch</h4><p>Vegetables from the walled garden, lamb from the next townland. The afternoon is not earned.</p></div>
+    </div>
+    <div class="day-row">
+      <div class="day-time">15:00</div>
+      <div class="day-content"><h4>The walk, or not</h4><p>The bog road, the cliff path at Dog's Bay, the boreen down to the strand. The wind decides.</p></div>
+    </div>
+    <div class="day-row">
+      <div class="day-time">19:30</div>
+      <div class="day-content"><h4>Dinner together</h4><p>The whole house at one table by the turf fire. Candlelight. A fiddle, sometimes.</p></div>
+    </div>
+    <div class="day-row">
+      <div class="day-time">22:00</div>
+      <div class="day-content"><h4>The house quiets</h4><p>The fire is banked for the night. The wind takes over. The body accepts the invitation to sleep.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- WHO -->
+<div class="screen" id="who">
+  <div class="topbar">
+    <a class="back-link" href="#home">← Back</a>
+    <div class="top-title">WHO COMES</div>
+    <span class="top-spacer"></span>
+  </div>
+  <div class="content">
+    <div class="content-eyebrow">Who Comes</div>
+    <h2 class="content-title">Not the worried well. <span class="italic">The genuinely emptied.</span></h2>
+    <p class="content-body" style="font-style: italic; margin-bottom: 20px;"><strong>Suaimhneas is the next room after the hospital</strong>, for people who would never otherwise reach Connemara.</p>
+    <div class="item-card">
+      <h3 class="item-title">People recovering from cancer</h3>
+      <p class="item-body">Treatment finished, technically well, facing the long aftermath that medical systems are not built to hold.</p>
+    </div>
+    <div class="item-card">
+      <h3 class="item-title">Long-term carers</h3>
+      <p class="item-body">Parents, partners, adult children who have spent years caring — and have arrived at the end of it, depleted in ways no one has named for them.</p>
+    </div>
+    <div class="item-card">
+      <h3 class="item-title">Frontline professionals</h3>
+      <p class="item-body">Nurses, doctors, hospice workers, social workers, teachers — those whose vocation has cost them their nervous system.</p>
+    </div>
+    <div class="item-card">
+      <h3 class="item-title">The bereaved</h3>
+      <p class="item-body">People in the long, quiet phase of grief — months and years after the funeral, when the world has moved on and they have not.</p>
+    </div>
+    <div class="item-card">
+      <h3 class="item-title">Survivors of catastrophic events</h3>
+      <p class="item-body">People emerging from the acute phase of accident, displacement, or violence, who need a place to be slowly held.</p>
+    </div>
+    <div class="item-card">
+      <h3 class="item-title">The chronically burnt out</h3>
+      <p class="item-body">Those whose collapse has been quiet, gradual, undramatic — and therefore largely invisible.</p>
+    </div>
+  </div>
+</div>
+
+<!-- INVITATION -->
+<div class="screen" id="invitation">
+  <div class="topbar">
+    <a class="back-link" href="#home">← Back</a>
+    <div class="top-title">AN INVITATION</div>
+    <span class="top-spacer"></span>
+  </div>
+  <div class="content">
+    <div class="content-eyebrow">An Invitation</div>
+    <h2 class="content-title">Perhaps a hundred people<br>could make this <span class="italic">real.</span></h2>
+    <div class="content-body">
+      <p>Suaimhneas is not seeking a return on investment. It is seeking the rare kind of capital that wishes to leave behind something that does not require it to keep performing.</p>
+      <p>A founding endowment of approximately <strong>twenty-five million euros</strong> funds the house in perpetuity.</p>
+      <p>The intention is not a chain. <em>It is one house, in one place, held to one standard.</em></p>
+    </div>
+    <div style="margin-top: 28px;">
+      <div class="tier">
+        <div class="tier-num">— i</div>
+        <h4 class="tier-title">Founding Patron</h4>
+        <p class="tier-body">Sole or co-lead funder of the founding endowment. Naming of the principal hearth in Cottage A, and a permanent seat on the trust.</p>
+      </div>
+      <div class="tier">
+        <div class="tier-num">— ii</div>
+        <h4 class="tier-title">Cottage Endower</h4>
+        <p class="tier-body">Endowment of one of the three cottages — five to seven million euros — covering build and a hundred-year operational reserve.</p>
+      </div>
+      <div class="tier">
+        <div class="tier-num">— iii</div>
+        <h4 class="tier-title">Stone Circle</h4>
+        <p class="tier-body">Twenty founding contributors, each at one million euros, forming the standing trust.</p>
+      </div>
+    </div>
+    <div class="closing-quote">
+      We are not building a clinic.<br>
+      We are building <em>a stone house in Connemara</em><br>
+      that knows how to wait.
+    </div>
+    <a href="mailto:niklas@example.com?subject=Suaimhneas" class="cta-btn">Continue the conversation →</a>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <a class="nav-link" href="#home">
+    <svg viewBox="0 0 24 24"><path d="M3 12l9-9 9 9M5 10v10h14V10"/></svg>
+    <span class="nav-label">Home</span>
+  </a>
+  <a class="nav-link" href="#place">
+    <svg viewBox="0 0 24 24"><path d="M4 21V11l8-6 8 6v10M9 21v-7h6v7"/></svg>
+    <span class="nav-label">Place</span>
+  </a>
+  <a class="nav-link" href="#day">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+    <span class="nav-label">Day</span>
+  </a>
+  <a class="nav-link" href="#invitation">
+    <svg viewBox="0 0 24 24"><path d="M3 7l9 6 9-6M3 7v10h18V7"/></svg>
+    <span class="nav-label">Invite</span>
+  </a>
+</nav>
+
+<script>
+  function showScreen() {
+    var hash = (window.location.hash || '#home').substring(1);
+    var screens = document.querySelectorAll('.screen');
+    for (var i = 0; i < screens.length; i++) {
+      screens[i].classList.remove('active');
+    }
+    var target = document.getElementById(hash);
+    if (target) {
+      target.classList.add('active');
+    } else {
+      document.getElementById('home').classList.add('active');
+    }
+    var navLinks = document.querySelectorAll('.nav-link');
+    for (var j = 0; j < navLinks.length; j++) {
+      var href = navLinks[j].getAttribute('href').substring(1);
+      if (href === hash || (hash === 'home' && href === 'home')) {
+        navLinks[j].style.color = 'var(--bracken)';
+      } else {
+        navLinks[j].style.color = 'var(--mist)';
+      }
+    }
+    window.scrollTo(0, 0);
+  }
+  window.addEventListener('hashchange', showScreen);
+  window.addEventListener('load', showScreen);
+</script>
+
+</body>
+</html>
